@@ -12,3 +12,13 @@ app.get("/", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+app.get("/send-email", async (req, res) => {
+  const job = await myQueue.add("email-job", {
+    to: "pejac52333@fengnu.com",
+    subject: "Test Email from BullMQ",
+    message: "Hello! This email was sent using BullMQ and Node.js"
+  });
+
+  res.send({ status: "Email job added", jobId: job.id });
+});
