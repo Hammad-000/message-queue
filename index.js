@@ -1,17 +1,12 @@
 import express from "express";
-import redisClient from "./redisClient.js";
+import myQueue from "./queue.js"; // 👈 add .js here
 
 const app = express();
 const port = 3000;
 
 app.get("/", async (req, res) => {
-  await redisClient.set("message", "Hello from Redis!");
-  const value = await redisClient.get("message");
-
-  res.send({
-    status: "Server running",
-    redisValue: value
-  });
+  const job = await myQueue.add("test-job", { message: "Hello BullMQ 🚀" });
+  res.send({ status: "Job added", jobId: job.id });
 });
 
 app.listen(port, () => {
