@@ -1,12 +1,8 @@
-import { Queue, Worker } from "bullmq";
+import { Worker } from "bullmq";
 import nodemailer from "nodemailer";
 
-// Create a queue
-const emailQueue = new Queue("emailQueue", {
-  connection: { host: "localhost", port: 6379 },
-});
+console.log("🚀 Worker is starting...");
 
-// Nodemailer test account
 const testAccount = await nodemailer.createTestAccount();
 
 const transporter = nodemailer.createTransport({
@@ -18,14 +14,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Worker to process emails
 const worker = new Worker(
-  "emailQueue",
+  "emailQueue", // matches queue.js
   async (job) => {
+    console.log("📩 Job received:", job.name, job.data);
+
     const { to, subject, message } = job.data;
 
     const info = await transporter.sendMail({
-      from: '"BullMQ Test" <no-reply@example.com>',
+      from: '"Hammad " <syedhammadahmed121@gmail.com>',
       to,
       subject,
       text: message,
@@ -33,37 +30,13 @@ const worker = new Worker(
 
     console.log("✅ Email sent! Preview URL:", nodemailer.getTestMessageUrl(info));
   },
-  { connection: { host: "localhost", port: 6379 } }
+  {
+    connection: {
+      host: "127.0.0.1",
+      port: 6379
+    }
+  }
 );
 
-worker.on("failed", (job, err) => {
-  console.error("❌ Job failed", job.id, err);
-});
-
-// import { Worker } from "bullmq";
-
-// const worker = new Worker(
-//   "my-queue",
-//   async (job) => {
-//     console.log("Processing job:", job.id, job.data);
-
-//     // simulate work
-//     await new Promise((resolve) => setTimeout(resolve, 2000));
-
-//     return { result: "done" };
-//   },
-//   {
-//     connection: {
-//       host: "127.0.0.1",
-//       port: 6379
-//     }
-//   }
-// );
-
-// worker.on("completed", (job) => {
-//   console.log(`✅ Job ${job.id} completed`);
-// });
-
-// worker.on("failed", (job, err) => {
-//   console.log(`❌ Job ${job.id} failed`, err);
-// });
+worker.on("completed", (job) => console.log(`✅ Job ${job.id} completed`));
+worker.on("failed", (job, err) => console.error("❌ Job failed", job.id, err));
