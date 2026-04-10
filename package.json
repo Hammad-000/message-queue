@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bullmq": "^5.72.0",
     "express": "^5.2.1",
+    "ioredis": "^5.10.1",
     "nodemailer": "^8.0.4",
     "nodemon": "^3.1.14",
     "redis": "^5.11.0"

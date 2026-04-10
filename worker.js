@@ -32,7 +32,7 @@ const worker = new Worker(
   },
   {
     connection: {
-      host: "127.0.0.1",
+      host: 'host.docker.internal',
       port: 6379
     }
   }
